@@ -1,53 +1,47 @@
-// index.js
 const express = require('express');
 const axios = require('axios');
-const dotenv = require('dotenv');
-
-dotenv.config();
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const WEATHERSTACK_API_KEY = process.env.WEATHERSTACK_API_KEY;
+const API_KEY = process.env.WEATHERSTACK_API_KEY;
 
 app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('Welcome to the Weather Information Service');
-});
+app.use(express.static('public'));
 
 app.get('/weather', async (req, res) => {
-  const city = req.query.city;
-  if (!city) {
-    return res.status(400).send('City is required');
-  }
+    const city = req.query.city;
 
-  try {
-    const response = await axios.get(`http://api.weatherstack.com/current`, {
-      params: {
-        access_key: WEATHERSTACK_API_KEY,
-        query: city,
-      },
-    });
-
-    const data = response.data;
-    if (data.error) {
-      return res.status(404).send(data.error.info);
+    if (!city) {
+        return res.status(400).json({ error: 'City is required' });
     }
 
-    const weatherInfo = {
-      location: data.location.name,
-      temperature: data.current.temperature,
-      weather_descriptions: data.current.weather_descriptions[0],
-      wind_speed: data.current.wind_speed,
-      humidity: data.current.humidity,
-    };
+    try {
+        const response = await axios.get(`http://api.weatherstack.com/current`, {
+            params: {
+                access_key: API_KEY,
+                query: city
+            }
+        });
 
-    res.json(weatherInfo);
-  } catch (error) {
-    res.status(500).send('Error fetching weather data');
-  }
+        if (response.data.error) {
+            return res.status(400).json({ error: response.data.error.info });
+        }
+
+        const weatherData = response.data;
+        res.json({
+            requested_city: city,
+            location: weatherData.location.name,
+            temperature: weatherData.current.temperature,
+            weather_descriptions: weatherData.current.weather_descriptions,
+            wind_speed: weatherData.current.wind_speed,
+            humidity: weatherData.current.humidity
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while fetching weather data' });
+    }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
