@@ -4,27 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Information Service</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-        }
-        h1 {
-            font-size: 24px;
-        }
-        .weather-info {
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Weather Information Service</h1>
-    <form id="weather-form">
-        <input type="text" id="city" name="city" placeholder="Enter city name" required>
-        <button type="submit">Get Weather</button>
-    </form>
-    <div class="weather-info" id="weather-info"></div>
+    <div class="container">
+        <h1>Weather Information Service</h1>
+        <form id="weather-form">
+            <input type="text" id="city" name="city" placeholder="Enter city name" required>
+            <button type="submit">Get Weather</button>
+        </form>
+        <div class="weather-info" id="weather-info"></div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
